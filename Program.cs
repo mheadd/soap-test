@@ -21,12 +21,22 @@ namespace soap_test
             XElement body = new XElement(ns.GetName("getAllObjects"));
             using (soapClient)
             {
-                var result = soapClient.Post(
-                      endpoint: endpoint,
-                      body: body);
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(result.Content.ReadAsStringAsync().Result);
-                Console.WriteLine(JsonConvert.SerializeXmlNode(doc));
+                try
+                {
+                    var result = soapClient.Post(
+                          endpoint: endpoint,
+                          body: body);
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(result.Content.ReadAsStringAsync().Result);
+                    Console.WriteLine(JsonConvert.SerializeXmlNode(doc));
+                }
+                catch (XmlException)
+                {
+                    Console.WriteLine("ERROR: Unable to get SOAP response");
+                }
+                catch (Exception exception) {
+                    Console.WriteLine($"ERROR: {exception.Message}");
+                }
             }
         }
     }
